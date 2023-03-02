@@ -26,5 +26,17 @@ namespace Market.API.Database.Order
         public DateTime CreatedAt { get; set; }
         
         public List<ProductModel> Products { get; set; }
+
+
+        public static OrderModel CreateModel(int userId, string shippingAddress)
+        {
+            return new OrderModel()
+            {
+                UserId = userId,
+                ShippingAddress = shippingAddress,
+                CreatedAt = DateTime.Now,
+                Products = new List<ProductModel>()
+            };
+        }
     }
 }
