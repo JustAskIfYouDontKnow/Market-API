@@ -19,4 +19,15 @@ public class UserModel : AbstractModel
     
     
     public List<OrderModel> Orders { get; set; }
+
+
+    public static UserModel CreateModel(string firstName, string lastName)
+    {
+        return new UserModel()
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Orders = new List<OrderModel>()
+        };
+    }
 }
