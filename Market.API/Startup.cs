@@ -1,5 +1,6 @@
 ﻿using Market.API.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Market.API
 {
@@ -14,7 +15,8 @@ namespace Market.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Market Api", Version = "v1"}); });
+
             var typeOfContent = typeof(Startup);
             services.AddDbContext<PostgresContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("MarketDB"),
@@ -31,9 +33,12 @@ namespace Market.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Market Api v1"));
             }
 
             app.UseRouting();
+
             
             dbContext.Database.Migrate();
 
