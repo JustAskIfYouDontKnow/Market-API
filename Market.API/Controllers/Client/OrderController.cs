@@ -8,18 +8,14 @@ namespace Market.API.Controllers.Client
     {
         
         public OrderController(IDatabaseContainer databaseContainer) : base(databaseContainer)
-        {
-        }
+        { }
 
 
         [HttpPost]
         public async Task<IActionResult> CreateOrder(int userId, IEnumerable<int> productIds, string deliveryAddress)
         {
             var user = await _databaseContainer.User.GetOneById(userId);
-
-
             var createdOrder = await _databaseContainer.OrderService.Create(user, productIds, deliveryAddress);
-
             return Ok(createdOrder);
         }
     }

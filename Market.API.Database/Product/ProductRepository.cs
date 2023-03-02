@@ -12,9 +12,9 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
     {
     }
 
-    public async Task<ProductModel> Create(string title, string description, decimal price)
+    public async Task<ProductModel> Create(string title, string description, decimal price, int userId)
     {
-        var model = ProductModel.CreateModel(title, description, price);
+        var model = ProductModel.CreateModel(title, description, price, userId);
         
         var result = await CreateModelAsync(model);
         if (result == null)

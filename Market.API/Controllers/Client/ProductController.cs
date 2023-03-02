@@ -12,11 +12,12 @@ namespace Market.API.Controllers.Client
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(string title, string description, decimal price)
+        public async Task<IActionResult> CreateProduct(string title, string description, decimal price, int userId)
         {
-            var createdProduct = await _databaseContainer.Product.Create(title, description, price);
+            var createdProduct = await _databaseContainer.Product.Create(title, description, price, userId);
             return Ok(createdProduct);
         }
+        
         
         [HttpGet]
         public async Task<IActionResult> FindProduct(int id)
@@ -25,6 +26,7 @@ namespace Market.API.Controllers.Client
             return Ok(foundedProduct);
         }
 
+        
         [HttpGet]
         public async Task<IActionResult> GetPaginatedProducts(int skip, int take)
         {
