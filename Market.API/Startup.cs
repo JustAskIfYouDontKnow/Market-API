@@ -1,5 +1,4 @@
-﻿using Market.API.Data;
-using Market.API.Services;
+﻿using Market.API.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Market.API
@@ -15,11 +14,12 @@ namespace Market.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            var typeOfContent = typeof(Startup);
             services.AddDbContext<PostgresContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("MarketDB")));
-
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IOrderService, OrderService>();
+                options.UseNpgsql(Configuration.GetConnectionString("MarketDB"),
+                    b => b.MigrationsAssembly(typeOfContent.Assembly.GetName().Name)));
+            
 
             services.AddControllers();
         }
