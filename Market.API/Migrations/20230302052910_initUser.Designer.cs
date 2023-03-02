@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.API.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    [Migration("20230302003002_initUser")]
+    [Migration("20230302052910_initUser")]
     partial class initUser
     {
         /// <inheritdoc />
