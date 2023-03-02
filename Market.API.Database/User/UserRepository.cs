@@ -21,4 +21,15 @@ public class UserRepository : AbstractRepository<UserModel>, IUserRepository
 
         return result;
     }
+
+    public async Task<UserModel> GetOneById(int id)
+    {
+        var user = await DbModel.FindAsync(id);
+        if (user == null)
+        {
+            throw new Exception("User is not found");
+        }
+
+        return user;
+    }
 }
