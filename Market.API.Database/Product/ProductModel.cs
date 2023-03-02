@@ -24,5 +24,17 @@ namespace Market.API.Database.Product
 
         [Required]
         public decimal Price { get; set; }
+
+
+        public static ProductModel CreateModel(int orderId, string title, string description, decimal price)
+        {
+            return new ProductModel
+            {
+                OrderId = orderId,
+                Title = title,
+                Description = description,
+                Price = price
+            };
+        }
     }
 }
