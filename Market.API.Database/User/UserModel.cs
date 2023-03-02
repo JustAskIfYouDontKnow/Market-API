@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Market.API.Database.Order;
+using System.Text.Json.Serialization;
+using Market.API.Database.OrderProduct;
 
 namespace Market.API.Database.User;
 
@@ -17,8 +18,8 @@ public class UserModel : AbstractModel
     [Required]
     public string LastName { get; set; }
     
-    
-    public List<OrderModel> Orders { get; set; }
+    [JsonIgnore]
+    public List<OrderProductModel> OrderProduct { get; set; }
 
 
     public static UserModel CreateModel(string firstName, string lastName)
@@ -27,7 +28,7 @@ public class UserModel : AbstractModel
         {
             FirstName = firstName,
             LastName = lastName,
-            Orders = new List<OrderModel>()
+            OrderProduct = new List<OrderProductModel>()
         };
     }
 }
