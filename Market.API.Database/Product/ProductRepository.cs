@@ -38,7 +38,7 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
         {
             throw new Exception($"Product by id {id} not found");
         }
-
+        
         return model;
     }
 

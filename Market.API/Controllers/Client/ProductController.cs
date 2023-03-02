@@ -50,13 +50,13 @@ namespace Market.API.Controllers.Client
             var user = await _databaseContainer.User.GetOneById(userId);
             var product = await _databaseContainer.Product.FindOneById(productId);
 
-            if (user.Id == product.CreatedByUserId)
+            if (user.Id != product.CreatedByUserId)
             {
-                await _databaseContainer.Product.Delete(product);
-                return Ok();
+                throw new Exception("Can't delete product");
             }
 
-            throw new Exception("Can't delete product");
+            await _databaseContainer.Product.Delete(product);
+            return Ok();
 
         }
     }
