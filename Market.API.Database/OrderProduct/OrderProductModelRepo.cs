@@ -20,7 +20,7 @@ public class OrderProductModelRepo : AbstractRepository<OrderProductModel>, IOrd
         var model = OrderProductModel.CreateModel(user, product, deliveryAddress);
 
         var result = await CreateModelAsync(model);
-        if (result == null)
+        if (result is null)
         {
             throw new Exception("Order product is not created");
         }

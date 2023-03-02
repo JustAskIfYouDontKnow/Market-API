@@ -46,7 +46,7 @@ namespace Market.API.Database
 
 
         public async Task DeleteModel(T model)
-        {
+        { 
             Delete(model);
             var result = await Context.SaveChangesAsync();
             if (result == 0)

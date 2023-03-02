@@ -25,7 +25,7 @@ public class UserRepository : AbstractRepository<UserModel>, IUserRepository
     public async Task<UserModel> GetOneById(int id)
     {
         var user = await DbModel.FindAsync(id);
-        if (user == null)
+        if (user is null)
         {
             throw new Exception("User is not found");
         }

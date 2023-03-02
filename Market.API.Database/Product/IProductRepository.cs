@@ -11,5 +11,9 @@ public interface IProductRepository
     
     Task<ProductModel> FindOneById(int id);
     
+    Task<List<ProductModel>> FindListByUserId(int userId);
+    
     Task<List<ProductModel>> GetProductsRange(int skip, int take);
+    
+    Task<bool> Delete(ProductModel product);
 }

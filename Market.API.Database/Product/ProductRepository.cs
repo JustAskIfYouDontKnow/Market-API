@@ -17,7 +17,7 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
         var model = ProductModel.CreateModel(title, description, price, userId);
         
         var result = await CreateModelAsync(model);
-        if (result == null)
+        if (result is null)
         {
             throw new Exception("Product model is not created.");
         }
@@ -29,13 +29,35 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
     {
         return  await DbModel.Where(x => ids.Contains(x.Id)).ToListAsync();
     }
+    
     public async Task<ProductModel> FindOneById(int id)
     {
-        return await DbModel.Where(x => x.Id == id).FirstOrDefaultAsync();
+        var model = await DbModel.FindAsync(id);
+
+        if (model is null)
+        {
+            throw new Exception($"Product by id {id} not found");
+        }
+
+        return model;
     }
-    
+
+
+    public async Task<List<ProductModel>> FindListByUserId(int userId)
+    {
+        return await DbModel.Where(x => x.CreatedByUserId == userId).ToListAsync();
+    }
+
+
     public async Task<List<ProductModel>> GetProductsRange(int skip, int take)
     {
         return await DbModel.Skip(skip).Take(take).ToListAsync();
+    }
+
+
+    public async Task<bool> Delete(ProductModel product)
+    {
+        await DeleteModel(product);
+        return true;
     }
 }

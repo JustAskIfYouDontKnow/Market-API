@@ -14,7 +14,8 @@ namespace Market.API.Controllers.Client
         [HttpPost]
         public async Task<IActionResult> CreateProduct(string title, string description, decimal price, int userId)
         {
-            var createdProduct = await _databaseContainer.Product.Create(title, description, price, userId);
+            var user = await _databaseContainer.User.GetOneById(userId);
+            var createdProduct = await _databaseContainer.Product.Create(title, description, price, user.Id);
             return Ok(createdProduct);
         }
         
@@ -32,6 +33,31 @@ namespace Market.API.Controllers.Client
         {
             var paginationProduct = await _databaseContainer.Product.GetProductsRange(skip, take);
             return Ok(paginationProduct);
+        }
+        
+        
+        [HttpGet]
+        public async Task<IActionResult> FindProductsByUserId(int userId)
+        {
+            var user = await _databaseContainer.User.GetOneById(userId);
+            var products = await _databaseContainer.Product.FindListByUserId(userId);
+            return Ok(products);
+        }
+        
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProductById(int userId, int productId)
+        {
+            var user = await _databaseContainer.User.GetOneById(userId);
+            var product = await _databaseContainer.Product.FindOneById(productId);
+
+            if (user.Id == product.CreatedByUserId)
+            {
+                await _databaseContainer.Product.Delete(product);
+                return Ok();
+            }
+
+            throw new Exception("Can't delete product");
+
         }
     }
 }
