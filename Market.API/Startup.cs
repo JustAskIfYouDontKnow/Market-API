@@ -22,6 +22,8 @@ namespace Market.API
             
 
             services.AddControllers();
+
+            services.AddScoped<IDatabaseContainer, DatabaseContainer>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, PostgresContext dbContext)
