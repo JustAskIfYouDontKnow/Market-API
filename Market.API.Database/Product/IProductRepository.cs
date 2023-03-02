@@ -1,8 +1,15 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Market.API.Database.Product;
 
 public interface IProductRepository
 {
-    Task<ProductModel> Create(int orderId, string title, string description, decimal price);
+    Task<ProductModel> Create(string title, string description, decimal price);
+
+    Task<List<ProductModel>> FindList(IEnumerable<int> ids);
+    
+    Task<ProductModel> FindOneById(int id);
+    
+    Task<List<ProductModel>> GetProductsRange(int skip, int take);
 }
