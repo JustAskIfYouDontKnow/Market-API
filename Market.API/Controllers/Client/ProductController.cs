@@ -26,9 +26,9 @@ namespace Market.API.Controllers.Client
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductPage(int skip, int take)
+        public async Task<IActionResult> GetPaginatedProducts(int skip, int take)
         {
-            var paginationProduct = await _databaseContainer.Product.TakePage(skip, take);
+            var paginationProduct = await _databaseContainer.Product.GetProductsRange(skip, take);
             return Ok(paginationProduct);
         }
     }
