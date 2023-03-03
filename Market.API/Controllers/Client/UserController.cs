@@ -16,5 +16,12 @@ public class UserController : AbstractClientController
         var createdUser = await DatabaseContainer.User.Create(firstName, lastName);
         return Ok(createdUser);
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        var collection = await DatabaseContainer.User.GetAllUsers();
+        return Ok(collection);
+    }
 
 }

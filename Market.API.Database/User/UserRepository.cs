@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Market.API.Database.User;
 
@@ -33,5 +36,10 @@ public class UserRepository : AbstractRepository<UserModel>, IUserRepository
         }
 
         return user;
+    }
+    
+    public async Task<List<UserModel>> GetAllUsers()
+    {
+        return await DbModel.ToListAsync();
     }
 }
