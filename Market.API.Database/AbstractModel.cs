@@ -1,6 +1,3 @@
 ﻿namespace Market.API.Database;
 
-public abstract class AbstractModel
-{
-    
-}
+public abstract class AbstractModel { }

@@ -7,10 +7,11 @@ namespace Market.API.Controllers;
 [Route("api/[controller]/[action]")]
 public abstract class AbstractClientController : ControllerBase
 {
-    protected readonly IDatabaseContainer _databaseContainer;
+    protected readonly IDatabaseContainer DatabaseContainer;
+
 
     protected AbstractClientController(IDatabaseContainer databaseContainer)
     {
-        _databaseContainer = databaseContainer;
+        DatabaseContainer = databaseContainer;
     }
 }

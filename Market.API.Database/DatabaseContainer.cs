@@ -8,10 +8,14 @@ namespace Market.API.Database;
 public class DatabaseContainer : IDatabaseContainer
 {
     public IUserRepository User { get; set; }
+
     public IProductRepository Product { get; set; }
+
     public IOrderProductModelRepo OrderProduct { get; set; }
-    
+
     public OrderService OrderService { get; set; }
+
+    public ServiceContainer ServiceContainer { get; }
 
 
     public DatabaseContainer(PostgresContext db)
@@ -19,9 +23,9 @@ public class DatabaseContainer : IDatabaseContainer
         User = new UserRepository(db);
         Product = new ProductRepository(db);
         OrderProduct = new OrderProductModelRepo(db);
-        OrderService = new OrderService(
-            new UserRepository(db),
-            new ProductRepository(db),
-            new OrderProductModelRepo(db));
+
+        OrderService = new OrderService(User, Product, OrderProduct);
+
+        ServiceContainer = new ServiceContainer(OrderService);
     }
 }

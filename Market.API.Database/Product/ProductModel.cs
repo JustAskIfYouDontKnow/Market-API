@@ -15,16 +15,17 @@ namespace Market.API.Database.Product
 
         [Required]
         public string Title { get; set; }
-        
+
         [Required]
         public string Description { get; set; }
 
         [Required]
         public decimal Price { get; set; }
-        
+
         [ForeignKey("CreatedByUserId")]
         [JsonIgnore]
         public virtual UserModel CreatedByUser { get; set; }
+
         public int CreatedByUserId { get; set; }
 
         [JsonIgnore]

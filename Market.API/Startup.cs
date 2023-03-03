@@ -8,25 +8,31 @@ namespace Market.API
     {
         public IConfiguration Configuration { get; }
 
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
+
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Market Api", Version = "v1"}); });
 
             var typeOfContent = typeof(Startup);
-            services.AddDbContext<PostgresContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("MarketDB"),
-                    b => b.MigrationsAssembly(typeOfContent.Assembly.GetName().Name)));
-            
+
+            services.AddDbContext<PostgresContext>(
+                options => options.UseNpgsql(
+                    Configuration.GetConnectionString("MarketDB"),
+                    b => b.MigrationsAssembly(typeOfContent.Assembly.GetName().Name)
+                )
+            );
 
             services.AddControllers();
 
             services.AddScoped<IDatabaseContainer, DatabaseContainer>();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, PostgresContext dbContext)
         {
@@ -39,13 +45,9 @@ namespace Market.API
 
             app.UseRouting();
 
-            
             dbContext.Database.Migrate();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

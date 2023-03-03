@@ -8,8 +8,10 @@ namespace Market.API.Database;
 public interface IDatabaseContainer
 {
     public IUserRepository User { get; set; }
+
     public IProductRepository Product { get; set; }
+
     public IOrderProductModelRepo OrderProduct { get; set; }
-    
+
     public OrderService OrderService { get; set; }
 }

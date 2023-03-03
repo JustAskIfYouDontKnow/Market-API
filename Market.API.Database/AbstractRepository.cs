@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Market.API.Database
 {
-    public abstract class AbstractRepository<T>
-        where T : AbstractModel
+    public abstract class AbstractRepository<T> where T : AbstractModel
     {
         protected readonly DbSet<T> DbModel;
 
@@ -23,6 +22,7 @@ namespace Market.API.Database
         {
             await Context.AddAsync(model);
             var result = await Context.SaveChangesAsync();
+
             if (result == 0)
             {
                 throw new Exception("Db error. Not Create any model");
@@ -46,9 +46,10 @@ namespace Market.API.Database
 
 
         public async Task DeleteModel(T model)
-        { 
+        {
             Delete(model);
             var result = await Context.SaveChangesAsync();
+
             if (result == 0)
             {
                 throw new Exception("Db error. Not deleted");
@@ -56,4 +57,3 @@ namespace Market.API.Database
         }
     }
 }
-

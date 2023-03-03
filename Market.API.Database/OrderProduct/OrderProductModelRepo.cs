@@ -10,9 +10,7 @@ namespace Market.API.Database.OrderProduct;
 
 public class OrderProductModelRepo : AbstractRepository<OrderProductModel>, IOrderProductModelRepo
 {
-    public OrderProductModelRepo(PostgresContext context) : base(context)
-    {
-    }
+    public OrderProductModelRepo(PostgresContext context) : base(context) { }
 
 
     public async Task<OrderProductModel> Create(UserModel user, ProductModel product, string deliveryAddress)
@@ -20,6 +18,7 @@ public class OrderProductModelRepo : AbstractRepository<OrderProductModel>, IOrd
         var model = OrderProductModel.CreateModel(user, product, deliveryAddress);
 
         var result = await CreateModelAsync(model);
+
         if (result is null)
         {
             throw new Exception("Order product is not created");
@@ -27,19 +26,22 @@ public class OrderProductModelRepo : AbstractRepository<OrderProductModel>, IOrd
 
         return result;
     }
-    
+
+
     public async Task<List<OrderProductModel>> FindOrdersByUserId(UserModel user)
     {
         var result = await DbModel.Where(x => x.UserId == user.Id).ToListAsync();
+
         if (result == null)
         {
             throw new Exception($"Order for user id {user.Id} is not found");
         }
+
         return result;
     }
 
 
-    public async Task<OrderProductModel> FindOneById(int id)
+    public async Task<OrderProductModel> GetOneById(int id)
     {
         var model = await DbModel.FindAsync(id);
 
@@ -50,14 +52,7 @@ public class OrderProductModelRepo : AbstractRepository<OrderProductModel>, IOrd
 
         return model;
     }
-
-
-    public async Task<List<OrderProductModel>> FindListByUserId(int userId)
-    {
-        return await DbModel.Where(x => x.UserId == userId).ToListAsync();
-    }
-
-
+    
     public async Task<List<OrderProductModel>> GetProductsRange(int skip, int take)
     {
         return await DbModel.Skip(skip).Take(take).ToListAsync();

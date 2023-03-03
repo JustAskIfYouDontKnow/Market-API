@@ -12,15 +12,15 @@ public class OrderService
     private readonly IProductRepository _productRepository;
     private readonly IOrderProductModelRepo _orderProduct;
 
+
     public OrderService(IUserRepository userRepository, IProductRepository productRepository, IOrderProductModelRepo orderProduct)
     {
         _userRepository = userRepository;
         _productRepository = productRepository;
         _orderProduct = orderProduct;
     }
-    
-    
- 
+
+
     public async Task<bool> Create(UserModel user, IEnumerable<int> productIds, string deliveryAddress)
     {
         var products = await _productRepository.FindList(productIds);
@@ -29,12 +29,11 @@ public class OrderService
         {
             return false;
         }
-        
+
         foreach (var product in products)
         {
-             await _orderProduct.Create(user, product, deliveryAddress);
+            await _orderProduct.Create(user, product, deliveryAddress);
         }
-        
 
         return true;
     }

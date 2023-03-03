@@ -9,7 +9,7 @@ public interface IProductRepository
 
     Task<List<ProductModel>> FindList(IEnumerable<int> ids);
     
-    Task<ProductModel> FindOneById(int id);
+    Task<ProductModel> GetOneById(int id);
     
     Task<List<ProductModel>> FindListByUserId(int userId);
     

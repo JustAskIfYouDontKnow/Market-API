@@ -8,15 +8,15 @@ namespace Market.API.Database.Product;
 
 public class ProductRepository : AbstractRepository<ProductModel>, IProductRepository
 {
-    public ProductRepository(PostgresContext context) : base(context)
-    {
-    }
+    public ProductRepository(PostgresContext context) : base(context) { }
+
 
     public async Task<ProductModel> Create(string title, string description, decimal price, int userId)
     {
         var model = ProductModel.CreateModel(title, description, price, userId);
-        
+
         var result = await CreateModelAsync(model);
+
         if (result is null)
         {
             throw new Exception("Product model is not created.");
@@ -25,12 +25,14 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
         return result;
     }
 
+
     public async Task<List<ProductModel>> FindList(IEnumerable<int> ids)
     {
-        return  await DbModel.Where(x => ids.Contains(x.Id)).ToListAsync();
+        return await DbModel.Where(x => ids.Contains(x.Id)).ToListAsync();
     }
-    
-    public async Task<ProductModel> FindOneById(int id)
+
+
+    public async Task<ProductModel> GetOneById(int id)
     {
         var model = await DbModel.FindAsync(id);
 
@@ -38,7 +40,7 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
         {
             throw new Exception($"Product by id {id} not found");
         }
-        
+
         return model;
     }
 
