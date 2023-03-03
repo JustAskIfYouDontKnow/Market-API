@@ -52,7 +52,7 @@ namespace Market.API.Controllers.Client
 
             if (user.Id != product.CreatedByUserId)
             {
-                throw new Exception("Can't delete product");
+               return BadRequest($"User {user.Id} tried to delete product: {product.Id}. Cannot complete this operation because it is not a user's product.");
             }
 
             await DatabaseContainer.Product.Delete(product);

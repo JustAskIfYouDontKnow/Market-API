@@ -69,7 +69,7 @@ namespace Market.API.Controllers.Client
 
             if (user.Id != order.UserId)
             {
-                throw new Exception($"User {user.Id} tried to delete order: {order.Id}. Cannot complete this operation because it is not a user's order.");
+                return BadRequest($"User {user.Id} tried to delete order: {order.Id}. Cannot complete this operation because it is not a user's order.");
             }
 
             await DatabaseContainer.OrderProduct.Delete(order);
