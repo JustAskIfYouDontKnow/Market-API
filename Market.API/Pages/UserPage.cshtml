@@ -1,0 +1,266 @@
+@page "/UserPage"
+@model Market.API.Pages.UserPage
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>User Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+form input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+button.createUser,
+button.product,
+button.get-all-products,
+button.createProduct
+{
+background-color: #4CAF50;
+color: #fff;
+padding: 10px 20px;
+font-size: 16px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+
+button.btn-get-products{
+ background: linear-gradient(to right,#196BCA ,#6433E0);
+ background-color: #196BCA;
+ color: #fff;
+ font-family: Trebuchet MS;
+ font-size: 14px;
+ font-weight: 800;
+ font-style: normal;
+ text-decoration: none;
+ padding: 7px 5px;
+ border: 0px solid #000;
+ border-radius: 10px;
+ display: inline-flex;
+ justify-content: center;
+ align-items: center;
+}
+button.btn-get-products span{
+ margin-left:5px;
+ display: block;
+ width: 29px;
+ height: 29px;
+ background-repeat: no-repeat;
+ background-size: contain;
+ transform: rotate(0deg);
+}
+button.btn-get-products:hover{
+ background: linear-gradient(to right,#5482d0 ,#7d5ee3);
+ background-color: #5482d0;
+}
+button.btn-get-products:active{
+ transform: scale(0.95);
+}
+
+button.product {
+margin-left: 10px;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+li span {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+ .dropdown-content {
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out;
+    }
+
+    .dropdown-content.active {
+        opacity: 1;
+        max-height: 200px;
+        transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out;
+    }
+
+.dropdown-content li {
+    margin: 10px 0;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>User Page</h1>
+    <form method="post">
+        <input type="text" name="firstName" placeholder="First Name" required/>
+        <input type="text" name="lastName" placeholder="Last Name" required/>
+        <button class="createUser" type="submit">Create User</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <ul>
+        @foreach (var user in Model.Users)
+        {
+            <li>
+                <span>ID: @user.Id</span>
+                @user.LastName @user.FirstName
+                <div class="dropdown">
+                    <button class="dropdown-button product">Products</button>
+                    <ul class="dropdown-content">
+                        <li>
+                            <button class="btn-get-products" data-user-id="@user.Id">Get Products</button>
+                            <div class="products-list"></div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        }
+    </ul>
+    <script>
+        const dropdownButtons = document.querySelectorAll(".dropdown-button");
+    dropdownButtons.forEach(button => {
+        const dropdownContent = button.nextElementSibling;
+
+        button.addEventListener("click", () => {
+            dropdownContent.classList.toggle("active");
+        });
+    });
+
+    const getProductButtons = document.querySelectorAll(".btn-get-products");
+
+    getProductButtons.forEach(button => {
+        button.addEventListener("click", async () => {
+            const userId = button.dataset.userId;
+            const productsList = button.parentElement.querySelector(".products-list");
+
+            const response = await fetch(`/api/Product/FindProductsByUserId?userId=${userId}`);
+            const products = await response.json();
+            productsList.innerHTML = products.map(product => `<li>ID${product.id}: ${product.title} - ${product.price}$</li>`).join('');
+        });
+    });
+</script>
+</div>
+<div class="container">
+    <h1>Get All Products</h1>
+    <form>
+        <input type="text" name="skip" placeholder="How much skip" required/>
+        <input type="text" name="take" placeholder="How much take" required/>
+        <button class="get-all-products" type="button">Get All Products</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <ul class="products-all-list"></ul>
+    <script>
+        const getProductsBtn = document.querySelector('.get-all-products');
+        const productsList = document.querySelector('.products-all-list');
+    getProductsBtn.addEventListener('click', () => {
+        const skip = document.querySelector('input[name="skip"]').value;
+        const take = document.querySelector('input[name="take"]').value;
+        fetch(`/api/product/GetProductsList?skip=${skip}&take=${take}`)
+            .then(response => response.json())
+            .then(products => {
+                productsList.innerHTML = products.map(product => `<li>ID${product.id}: ${product.title} - ${product.price}$</li>`).join('');
+            });
+    });
+</script>
+</div>
+
+<div class="container">
+    <style>
+    
+  form[name="CreateProduct"] {
+               transform: scale(0.85);
+               
+               
+       }
+        
+        form[name="CreateProduct"] {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        form[name="CreateProduct"] input[type="text"] {
+          margin: 5px;
+          padding: 10px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+        
+        form[name="CreateProduct"] button.createProduct {
+          margin-top: 20px;
+          background-color: #4CAF50;
+          color: #fff;
+          padding: 10px 20px;
+          font-size: 16px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+</style>
+    
+   <h1>Create Product</h1>
+   <form id="create-product-form">
+       <input type="text" name="title" placeholder="Title" required/>
+       <input type="text" name="description" placeholder="Description" required/>
+       <input type="text" name="price" placeholder="Price" required/>
+       <input type="text" name="userId" placeholder="User ID" required/>
+       <button class="createProduct" type="submit">Create Product</button>
+   </form>
+   <script>
+       const createProductForm = document.querySelector('#create-product-form');
+       createProductForm.addEventListener('submit', event => {
+           event.preventDefault();
+           const title = document.querySelector('input[name="title"]').value;
+           const description = document.querySelector('input[name="description"]').value;
+           const price = document.querySelector('input[name="price"]').value;
+           const userId = document.querySelector('input[name="userId"]').value;
+           fetch(`/api/product/CreateProduct?title=${title}&description=${description}&price=${price}&userId=${userId}`, { method: 'POST' })
+               .then(response => response.json())
+               .then(createdProduct => {
+                   console.log(createdProduct);
+               });
+       });
+   </script>
+</div>
+</body>
+</html>
