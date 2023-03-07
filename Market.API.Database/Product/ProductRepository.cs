@@ -11,9 +11,9 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
     public ProductRepository(PostgresContext context) : base(context) { }
 
 
-    public async Task<ProductModel> Create(string title, string description, decimal price, int userId)
+    public async Task<ProductModel> Create(int userId, string title, string description, decimal price)
     {
-        var model = ProductModel.CreateModel(title, description, price, userId);
+        var model = ProductModel.CreateModel(userId, title, description, price);
 
         var result = await CreateModelAsync(model);
 
@@ -47,13 +47,13 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
 
     public async Task<List<ProductModel>> FindListByUserId(int userId)
     {
-        return await DbModel.Where(x => x.CreatedByUserId == userId).ToListAsync();
+        return await DbModel.Where(x => x.UserId == userId).ToListAsync();
     }
 
 
     public async Task<List<ProductModel>> GetProductsRange(int skip, int take)
     {
-        return await DbModel.Skip(skip).Take(take).ToListAsync();
+        return await DbModel.Include(x =>x.UserModel).Include(x=>x.OrderProducts).Skip(skip).Take(take).ToListAsync();
     }
 
 

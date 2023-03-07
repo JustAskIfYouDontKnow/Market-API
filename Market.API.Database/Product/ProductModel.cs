@@ -13,6 +13,11 @@ namespace Market.API.Database.Product
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [ForeignKey("UserId")]
+        public  UserModel UserModel { get; set; }
+
+        public int UserId { get; set; }
+        
         [Required]
         public string Title { get; set; }
 
@@ -22,24 +27,18 @@ namespace Market.API.Database.Product
         [Required]
         public decimal Price { get; set; }
 
-        [ForeignKey("CreatedByUserId")]
-        [JsonIgnore]
-        public virtual UserModel CreatedByUser { get; set; }
-
-        public int CreatedByUserId { get; set; }
-
         [JsonIgnore]
         public List<OrderProductModel> OrderProducts { get; set; }
 
 
-        public static ProductModel CreateModel(string title, string description, decimal price, int createdById)
+        public static ProductModel CreateModel(int userId, string title, string description, decimal price)
         {
             return new ProductModel
             {
+                UserId = userId,
                 Title = title,
                 Description = description,
                 Price = price,
-                CreatedByUserId = createdById
             };
         }
     }

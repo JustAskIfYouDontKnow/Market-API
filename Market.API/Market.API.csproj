@@ -16,11 +16,18 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Market.API.Client\Market.API.Client.csproj" />
       <ProjectReference Include="..\Market.API.Database\Market.API.Database.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Migrations" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pages\UserPage.cs">
+        <DependentUpon>UserPage.cshtml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

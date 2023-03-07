@@ -5,7 +5,7 @@ namespace Market.API.Database.Product;
 
 public interface IProductRepository
 {
-    Task<ProductModel> Create(string title, string description, decimal price, int userId);
+    Task<ProductModel> Create(int userId, string title, string description, decimal price);
 
     Task<List<ProductModel>> FindList(IEnumerable<int> ids);
     
