@@ -1,0 +1,74 @@
+@page
+@model Market.API.Pages.Products
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="productId">Product ID:</label>
+        <input type="text" class="form-control" id="productId" name="id">
+    </div>
+    <button type="submit" class="btn btn-primary">Get Product</button>
+</form>
+
+@if (Model.Product is not null)
+{
+    <h2>@Model.Product.Title</h2>
+    <p>@Model.Product.Description</p>
+    <p>@Model.Product.Price</p>
+}
+else
+{
+<p>Product not found</p>
+}
+
+<hr>
+
+<form method="get">
+    <div class="form-group">
+        <label for="skip">Skip:</label>
+        <input type="text" class="form-control" id="skip" name="skip">
+    </div>
+    <div class="form-group">
+        <label for="take">Take:</label>
+        <input type="text" class="form-control" id="take" name="take">
+    </div>
+    <button type="submit" class="btn btn-primary">Get Products List</button>
+</form>
+
+@if (Model.ProductsList.Count() != 0 )
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.ProductsList)
+            {
+                <tr>
+                    <td>@product.Title</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table">
+    <thead>
+    <tr>
+        <p>No such product found</p>
+    </tr>
+    </thead>
+   
+    </table>
+}

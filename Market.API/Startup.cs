@@ -1,5 +1,6 @@
 ﻿using Market.API.Controllers.Client;
 using Market.API.Database;
+using Market.API.Database.Product;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -29,6 +30,7 @@ namespace Market.API
                 )
             );
             services.AddScoped<UserController>();
+            services.AddScoped<ProductRepository>();
             
             services.AddControllers();
             services.AddRazorPages();
