@@ -1,5 +1,6 @@
 using Market.API.Client.Payload;
 using Market.API.Database.Product;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Market.API.Pages;
@@ -13,7 +14,8 @@ public class Products : PageModel
         _productRepository = productRepository;
     }
     public ProductModel Product { get; set; }
-    public IEnumerable<ProductModel> ProductsList { get; set; }
+
+    public IEnumerable<ProductModel> ProductsList { get; set; } = new List<ProductModel>();
 
 
     public async Task OnGet(int? id, int? skip, int? take)
@@ -24,8 +26,8 @@ public class Products : PageModel
         }
 
         if (skip.HasValue && take.HasValue)
-        {
-            ProductsList = await _productRepository.GetProductsRange(skip.Value, take.Value);
+        { ProductsList = await _productRepository.GetProductsRange(skip.Value, take.Value);
         }
     }
+    
 }
