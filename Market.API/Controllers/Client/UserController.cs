@@ -1,4 +1,5 @@
 using Market.API.Database;
+using Market.API.Database.User;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -22,6 +23,12 @@ public class UserController : AbstractClientController
     {
         var collection = await DatabaseContainer.User.GetAllUsers();
         return Ok(collection);
+    }
+    
+    public async Task<IActionResult> LoginUser([FromForm] string username, [FromForm] string password)
+    {
+        Console.WriteLine("User " + username + "Password " + password);
+        return Ok();
     }
 
 }

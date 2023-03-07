@@ -1,4 +1,8 @@
-﻿using Market.API.Database;
+﻿using Market.API.Client.Payload;
+using Market.API.Client.Product;
+using Market.API.Database;
+using Market.API.Database.OrderProduct;
+using Market.API.Database.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Market.API.Controllers.Client
@@ -9,12 +13,12 @@ namespace Market.API.Controllers.Client
 
         public ProductController(IDatabaseContainer databaseContainer) : base(databaseContainer) { }
 
-
+      
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(string title, string description, decimal price, int userId)
+        public async Task<IActionResult> CreateProduct(int userId, string title, string description, decimal price)
         {
             var user = await DatabaseContainer.User.GetOneById(userId);
-            var createdProduct = await DatabaseContainer.Product.Create(title, description, price, user.Id);
+            var createdProduct = await DatabaseContainer.Product.Create(user.Id, title, description, price);
             return Ok(createdProduct);
         }
 
@@ -30,17 +34,49 @@ namespace Market.API.Controllers.Client
         [HttpGet]
         public async Task<IActionResult> GetProductsList(int skip, int take)
         {
-            var paginationProduct = await DatabaseContainer.Product.GetProductsRange(skip, take);
-            return Ok(paginationProduct);
+            var products = await DatabaseContainer.Product.GetProductsRange(skip, take);
+            
+            var response = products.Select(p => new 
+            {
+                ProductId = p.Id,
+                UserId = p.UserId,
+                Description = p.Description,
+                Price = p.Price,
+                FirstName = p.UserModel.FirstName,
+                LastName = p.UserModel.LastName,
+                
+                OrderedInOrder = p.OrderProducts.Select(o => new 
+                {
+                    Id = o.Id,
+                    CreatedAt = o.CreatedAt
+                })
+                
+            }).ToList();
+            
+            return Ok(response);
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> FindProductsByUserId(int userId)
+        [HttpPost]
+        [ProducesResponseType(typeof(GetUserProducts.ResponseListByUserId), 200)]
+        public async Task<GetUserProducts.ResponseListByUserId> ListProductsByUserId([FromBody] GetUserProducts request)
         {
-            var user = await DatabaseContainer.User.GetOneById(userId);
-            var products = await DatabaseContainer.Product.FindListByUserId(userId);
-            return Ok(products);
+            var user = await DatabaseContainer.User.GetOneById(request.UserId);
+            var products = await DatabaseContainer.Product.FindListByUserId(user.Id);
+
+            return new GetUserProducts.ResponseListByUserId()
+            {
+                Products = products.Select(
+                        x => new Product()
+                        {
+                            Id = x.Id,
+                            UserId = x.UserId,
+                            Description = x.Description,
+                            Price = x.Price,
+                        }
+                    )
+                    .ToList()
+            };
         }
 
 
@@ -50,7 +86,7 @@ namespace Market.API.Controllers.Client
             var user = await DatabaseContainer.User.GetOneById(userId);
             var product = await DatabaseContainer.Product.GetOneById(productId);
 
-            if (user.Id != product.CreatedByUserId)
+            if (user.Id != product.UserId)
             {
                return BadRequest($"User {user.Id} tried to delete product: {product.Id}. Cannot complete this operation because it is not a user's product.");
             }
