@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Market.API.Database.Order;
 using Market.API.Database.OrderProduct;
 using Market.API.Database.Product;
 using Market.API.Database.User;
@@ -10,14 +12,14 @@ public class OrderService
 {
     private readonly IUserRepository _userRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IOrderProductModelRepo _orderProduct;
+    private readonly IOrderModelRepository _orderRepository;
 
 
-    public OrderService(IUserRepository userRepository, IProductRepository productRepository, IOrderProductModelRepo orderProduct)
+    public OrderService(IUserRepository userRepository, IProductRepository productRepository, IOrderModelRepository orderRepository)
     {
         _userRepository = userRepository;
         _productRepository = productRepository;
-        _orderProduct = orderProduct;
+        _orderRepository = orderRepository;
     }
 
 
@@ -29,12 +31,8 @@ public class OrderService
         {
             return false;
         }
-
-        foreach (var product in products)
-        {
-            await _orderProduct.Create(user, product, deliveryAddress);
-        }
-
+        var orderProducts = products.Select(p => new OrderProductModel { ProductId = p.Id }).ToList(); 
+        await _orderRepository.Create(user, orderProducts, deliveryAddress);
         return true;
     }
 }

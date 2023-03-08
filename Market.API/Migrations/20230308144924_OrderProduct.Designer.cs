@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.API.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    [Migration("20230302053037_initOrderProduct")]
-    partial class initOrderProduct
+    [Migration("20230308144924_OrderProduct")]
+    partial class OrderProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Market.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Market.API.Database.OrderProduct.OrderProductModel", b =>
+            modelBuilder.Entity("Market.API.Database.Order.OrderModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,17 +40,35 @@ namespace Market.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("UserId");
+
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("Market.API.Database.OrderProduct.OrderProductModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderProduct");
                 });
@@ -74,7 +92,12 @@ namespace Market.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Product");
                 });
@@ -100,33 +123,55 @@ namespace Market.API.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("Market.API.Database.Order.OrderModel", b =>
+                {
+                    b.HasOne("Market.API.Database.User.UserModel", "UserModel")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserModel");
+                });
+
             modelBuilder.Entity("Market.API.Database.OrderProduct.OrderProductModel", b =>
                 {
+                    b.HasOne("Market.API.Database.Order.OrderModel", "OrderModel")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Market.API.Database.Product.ProductModel", "ProductModel")
                         .WithMany("OrderProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("OrderModel");
+
+                    b.Navigation("ProductModel");
+                });
+
+            modelBuilder.Entity("Market.API.Database.Product.ProductModel", b =>
+                {
                     b.HasOne("Market.API.Database.User.UserModel", "UserModel")
-                        .WithMany("OrderProduct")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductModel");
-
                     b.Navigation("UserModel");
+                });
+
+            modelBuilder.Entity("Market.API.Database.Order.OrderModel", b =>
+                {
+                    b.Navigation("OrderProducts");
                 });
 
             modelBuilder.Entity("Market.API.Database.Product.ProductModel", b =>
                 {
                     b.Navigation("OrderProducts");
-                });
-
-            modelBuilder.Entity("Market.API.Database.User.UserModel", b =>
-                {
-                    b.Navigation("OrderProduct");
                 });
 #pragma warning restore 612, 618
         }

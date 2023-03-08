@@ -45,12 +45,6 @@ namespace Market.API.Controllers.Client
                 FirstName = p.UserModel.FirstName,
                 LastName = p.UserModel.LastName,
                 
-                OrderedInOrder = p.OrderProducts.Select(o => new 
-                {
-                    Id = o.Id,
-                    CreatedAt = o.CreatedAt
-                })
-                
             }).ToList();
             
             return Ok(response);

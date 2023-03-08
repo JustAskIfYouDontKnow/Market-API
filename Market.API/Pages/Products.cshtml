@@ -3,41 +3,9 @@
 @{
     ViewData["Title"] = "Products";
 }
+<button type="button" class="btn btn-primary" onclick="getProductsList(0, 10)">Get Products List</button>
 
-<h1>Get Products</h1>
-<form method="get">
-        <div class="form-group">
-            <label for="productId">Product ID:</label>
-            <input type="text" class="form-control" id="productId" name="id">
-        </div>
-        <button type="submit" class="btn btn-primary">Get Product</button>
-    </form>
-
-    @if (Model.Product is not null)
-    {
-        <h2>@Model.Product.Title</h2>
-        <p>@Model.Product.Description</p>
-        <p>@Model.Product.Price</p>
-    } else
-    {
-        <p>Product not found</p>
-    }
-<hr>
-
-<h1>Get Products List</h1>
-<form method="get">
-    <div class="form-group">
-        <label for="skip">Skip:</label>
-        <input type="text" class="form-control" id="skip" name="skip">
-    </div>
-    <div class="form-group">
-        <label for="take">Take:</label>
-        <input type="text" class="form-control" id="take" name="take">
-    </div>
-    <button type="submit" class="btn btn-primary">Get Products List</button>
-</form>
-
-@if (Model.ProductsList != null)
+@if (Model.ProductsList != null && Model.ProductsList.Any())
 {
     <table class="table">
         <thead>
@@ -54,35 +22,120 @@
                 <td>@product.Title</td>
                 <td>@product.Description</td>
                 <td>@product.Price</td>
-                
             </tr>
         }
         </tbody>
     </table>
-    } else
+} else
 {
     <p>No products found</p>
 }
-<hr>
 
-<h1>Create Product</h1>
-
-<form method="post" asp-page-handler="createProduct">
-    <div>
-        <label>Name:</label>
-        <input type="text" name="Name" required>
-    </div>
-    <div>
-        <label>Description:</label>
-        <input type="text" name="Description" required>
-    </div>
-    <div>
-        <label>Price:</label>
-        <input type="number" name="Price" min="0" required>
-    </div>
-    <div>
-        <label>Quantity:</label>
-        <input type="number" name="Quantity" min="0" required>
-    </div>
-    <button type="submit">Create Product</button>
-</form>
+<script>
+        async function getProductsList(skip, take) {
+            const response = await fetch(`/Product/GetProductsList?skip=${skip}&take=${take}`, {
+                method: 'GET'
+            });
+            const data = await response.json();
+            if (data && data.length > 0) {
+                $('table').show();
+                $('table tbody').html('');
+                data.forEach(product => {
+                    $('table tbody').append(`
+                        <tr>
+                            <td>${product.Title}</td>
+                            <td>${product.Description}</td>
+                            <td>${product.Price}</td>
+                        </tr>
+                    `);
+                });
+            } else {
+                $('table').hide();
+                $('p').show();
+            }
+        }
+    </script>
+@* <h1>Get Products</h1> *@
+@* <form method="get"> *@
+@*         <div class="form-group"> *@
+@*             <label for="productId">Product ID:</label> *@
+@*             <input type="text" class="form-control" id="productId" name="id"> *@
+@*         </div> *@
+@*         <button type="submit" class="btn btn-primary">Get Product</button> *@
+@*     </form> *@
+@* *@
+@*     @if (Model.Product is not null) *@
+@*     { *@
+@*         <h2>@Model.Product.Title</h2> *@
+@*         <p>@Model.Product.Description</p> *@
+@*         <p>@Model.Product.Price</p> *@
+@*     } else *@
+@*     { *@
+@*         <p>Product not found</p> *@
+@*     } *@
+@* <hr> *@
+@* *@
+@* <h1>Get Products List</h1> *@
+@* <form method="get"> *@
+@*     <div class="form-group"> *@
+@*         <label for="skip">Skip:</label> *@
+@*         <input type="text" class="form-control" id="skip" name="skip"> *@
+@*     </div> *@
+@*     <div class="form-group"> *@
+@*         <label for="take">Take:</label> *@
+@*         <input type="text" class="form-control" id="take" name="take"> *@
+@*     </div> *@
+@*     <button type="submit" class="btn btn-primary">Get Products List</button> *@
+@* </form> *@
+@* @if (Model.ProductsList != null) *@
+@* { *@
+@*     <table class="table"> *@
+@*         <thead> *@
+@*         <tr> *@
+@*             <th>Title</th> *@
+@*             <th>Description</th> *@
+@*             <th>Price</th> *@
+@*         </tr> *@
+@*         </thead> *@
+@*         <tbody> *@
+@*         @foreach (var product in Model.ProductsList) *@
+@*         { *@
+@*             <tr> *@
+@*                 <td>@product.Title</td> *@
+@*                 <td>@product.Description</td> *@
+@*                 <td>@product.Price</td> *@
+@*                  *@
+@*             </tr> *@
+@*         } *@
+@*         </tbody> *@
+@*     </table> *@
+@*     } else *@
+@* { *@
+@*     <p>No products found</p> *@
+@* } *@
+@* <hr> *@
+@* *@
+@* *@
+@* <h1>Create Product</h1> *@
+@* *@
+@* <form method="post" asp-page-handler="createProduct"> *@
+@*     <div> *@
+@*         <label>Name:</label> *@
+@*         <input type="text" name="Name" required> *@
+@*     </div> *@
+@*     <div> *@
+@*         <label>Description:</label> *@
+@*         <input type="text" name="Description" required> *@
+@*     </div> *@
+@*     <div> *@
+@*         <label>Price:</label> *@
+@*         <input type="number" name="Price" min="0" required> *@
+@*     </div> *@
+@*     <div> *@
+@*         <label>Quantity:</label> *@
+@*         <input type="number" name="Quantity" min="0" required> *@
+@*     </div> *@
+@*     <button type="submit">Create Product</button> *@
+@* </form> *@
+@* *@
+@* *@

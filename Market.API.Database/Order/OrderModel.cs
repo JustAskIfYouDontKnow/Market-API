@@ -1,13 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Market.API.Database.OrderProduct;
+using Market.API.Database.Product;
 using Market.API.Database.User;
 
-namespace Market.API.Database.Product
-{
-    public class ProductModel : AbstractModel
+namespace Market.API.Database.Order
+{ 
+    public class OrderModel : AbstractModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,22 +24,19 @@ namespace Market.API.Database.Product
         public List<OrderProductModel> OrderProducts { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string DeliveryAddress { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        [Required]
-        public decimal Price { get; set; }
-
-        public static ProductModel CreateModel(int userId, string title, string description, decimal price)
+        public static OrderModel CreateModel(UserModel user, List<OrderProductModel> orderProducts, string deliveryAddress)
         {
-            return new ProductModel
+            return new OrderModel()
             {
-                UserId = userId,
-                Title = title,
-                Description = description,
-                Price = price,
+                UserModel = user, 
+                OrderProducts = orderProducts,
+                DeliveryAddress = deliveryAddress,
+                CreatedAt = DateTime.UtcNow
             };
         }
     }

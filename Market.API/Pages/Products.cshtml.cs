@@ -18,7 +18,7 @@ public class Products : PageModel
     public IEnumerable<ProductModel> ProductsList { get; set; } = new List<ProductModel>();
 
 
-    public async Task OnGet(int? id, int? skip, int? take)
+    public async Task OnGetProduct(int? id, int? skip, int? take)
     {
         if (id.HasValue)
         {

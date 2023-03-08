@@ -53,10 +53,9 @@ public class ProductRepository : AbstractRepository<ProductModel>, IProductRepos
 
     public async Task<List<ProductModel>> GetProductsRange(int skip, int take)
     {
-        return await DbModel.Include(x =>x.UserModel).Include(x=>x.OrderProducts).Skip(skip).Take(take).ToListAsync();
+        return await DbModel.Include(x =>x.UserModel).Skip(skip).Take(take).ToListAsync();
     }
-
-
+    
     public async Task<bool> Delete(ProductModel product)
     {
         await DeleteModel(product);
