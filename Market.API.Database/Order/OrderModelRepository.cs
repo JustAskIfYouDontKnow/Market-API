@@ -30,7 +30,10 @@ public class OrderModelRepository : AbstractRepository<OrderModel>, IOrderModelR
 
     public async Task<List<OrderModel>> FindOrdersByUserId(UserModel user)
     {
-        var result = await DbModel.Include(p => p.OrderProducts).Where(x => x.UserId == user.Id).ToListAsync();
+        var result = await DbModel.Include(o => o.OrderProducts)
+            .ThenInclude(op => op.ProductModel)
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync();
         
         if (result == null)
         {

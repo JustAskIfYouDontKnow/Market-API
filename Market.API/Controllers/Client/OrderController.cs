@@ -39,70 +39,58 @@ namespace Market.API.Controllers.Client
         public async Task<IActionResult> FindOrdersByUserId(int userId)
         {
             var user = await DatabaseContainer.User.GetOneById(userId);
-            var totalOrder = await DatabaseContainer.Order.FindOrdersByUserId(user);
-            return Ok(totalOrder);
+            var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
+            return Ok(orders);
         }
     
     
-        // [HttpGet]
-        // public async Task<IActionResult> GetGroupedOrdersByDeliveryAddress(int userId)
-        // {
-        //     var user = await DatabaseContainer.User.GetOneById(userId);
-        //     var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
-        //
-        //     var groupedOrders = orders.GroupBy(o => new {o.UserId, o.DeliveryAddress})
-        //         .Select(g => new 
-        //         {
-        //             g.Key.DeliveryAddress,
-        //             OrderIds = string.Join(",", g.Select(o => o.Id)),
-        //             ProductIds = string.Join(",", g.Select(o => o.Products)),
-        //             CreatedAt = g.Max(o => o.CreatedAt),
-        //             g.Key.UserId,
-        //         });
-        //     
-        //     return Ok(groupedOrders);
-        // }
+        [HttpGet]
+        public async Task<IActionResult> GetGroupedOrdersByDeliveryAddress(int userId)
+        {
+            var user = await DatabaseContainer.User.GetOneById(userId);
+            var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
         
-        // [HttpGet]
-        // public async Task<IActionResult> GetFullInformationByOrder(int userId)
-        // {
-        //     var user = await DatabaseContainer.User.GetOneById(userId);
-        //     var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
-        //
-        //     var groupedOrders = orders.GroupBy(o => new
-        //         {
-        //             o.UserId,
-        //             o.DeliveryAddress
-        //         })
-        //         .Select(g => new
-        //         {
-        //             DeliveryAddress = g.Key.DeliveryAddress,
-        //             UserId = g.Key.UserId,
-        //
-        //             Orders = g.GroupBy(o => new
-        //                 {
-        //                     o.Id,
-        //                     o.CreatedAt
-        //                 })
-        //
-        //                 .Select(o => new
-        //                 {
-        //                     OrderId = o.Key.Id,
-        //                     CreatedAt = o.Key.CreatedAt,
-        //
-        //                     Products = o.Select(p => new
-        //                     {
-        //                         ProductId = p.Products,
-        //                         Title = p.Products,
-        //                         Description = p.Products,
-        //                         Price = p.Products
-        //                     }).ToList()
-        //                 }).ToList()
-        //         });
-        //
-        //     return Ok(groupedOrders);
-        //
-        // }
+            var groupedOrders = orders.GroupBy(o => new {o.UserId, o.DeliveryAddress})
+                .Select(g => new 
+                {
+                    g.Key.DeliveryAddress,
+                    OrderIds = string.Join(",", g.Select(o => o.Id)),
+                    ProductIds = string.Join(",", g.Select(o => o.OrderProducts)),
+                    CreatedAt = g.Max(o => o.CreatedAt),
+                    g.Key.UserId,
+                });
+            
+            return Ok(groupedOrders);
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetFullOrderInformation(int userId)
+        {
+            var user = await DatabaseContainer.User.GetOneById(userId);
+            var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
+
+            var result = orders.Select(o => new
+            {
+               OrderID = o.Id,
+               UserID = o.UserId,
+               DeliveryAddress = o.DeliveryAddress,
+               CreatedAt = o.CreatedAt,
+               ProductsInOrder = o.OrderProducts.Select(op => new
+                {
+                    Product = new
+                    {
+                        op.ProductModel.Id,
+                        op.ProductModel.Title,
+                        op.ProductModel.Description,
+                        op.ProductModel.Price
+                    }
+                }).ToList(),
+               
+            }).ToList();
+            
+            return Ok(result);
+        
+        }
         
         [HttpDelete]
         public async Task<IActionResult> DeleteOrderById(int userId, int orderId)
