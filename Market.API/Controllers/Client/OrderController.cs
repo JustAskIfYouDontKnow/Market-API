@@ -1,4 +1,5 @@
-﻿using Market.API.Database;
+﻿using Market.API.Client.Payload;
+using Market.API.Database;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Market.API.Controllers.Client
@@ -44,48 +45,59 @@ namespace Market.API.Controllers.Client
         }
     
     
+       
+
+
+
         [HttpGet]
-        public async Task<IActionResult> GetGroupedOrdersByDeliveryAddress(int userId)
+        public async Task<IActionResult> GetFullOrderInformation(int userId, int orderId)
         {
             var user = await DatabaseContainer.User.GetOneById(userId);
-            var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
-        
-            var groupedOrders = orders.GroupBy(o => new {o.UserId, o.DeliveryAddress})
-                .Select(g => new 
-                {
-                    g.Key.DeliveryAddress,
-                    OrderIds = string.Join(",", g.Select(o => o.Id)),
-                    ProductIds = string.Join(",", g.Select(o => o.OrderProducts)),
-                    CreatedAt = g.Max(o => o.CreatedAt),
-                    g.Key.UserId,
-                });
+           
             
-            return Ok(groupedOrders);
+            var order = await DatabaseContainer.Order.GetOneById(orderId);
+            if (user.Id != order.UserId)
+            {
+                return BadRequest($"User ID: {user.Id} tried to get full information for order ID: {order.Id}. Cannot complete this operation because it is not a user's order.");
+            }
+
+            var result = new OrderDetails
+            {
+                OrderId = order.Id,
+                UserId = order.UserId,
+                DeliveryAddress = order.DeliveryAddress,
+                CreatedAt = order.CreatedAt,
+                ProductsInOrder = order.OrderProducts.Select(pd => new ProductDetails
+                {
+                    Id = pd.ProductModel.Id,
+                    Description = pd.ProductModel.Description,
+                    Title = pd.ProductModel.Title,
+                    Price = pd.ProductModel.Price
+                }).ToList(),
+            };
+
+            return Ok(result);
         }
-        
+
         [HttpGet]
-        public async Task<IActionResult> GetFullOrderInformation(int userId)
+        public async Task<IActionResult> GetFullOrdersInformation(int userId)
         {
             var user = await DatabaseContainer.User.GetOneById(userId);
             var orders = await DatabaseContainer.Order.FindOrdersByUserId(user);
 
-            var result = orders.Select(o => new
+            var result = orders.Select(od => new OrderDetails
             {
-               OrderID = o.Id,
-               UserID = o.UserId,
-               DeliveryAddress = o.DeliveryAddress,
-               CreatedAt = o.CreatedAt,
-               ProductsInOrder = o.OrderProducts.Select(op => new
+                OrderId = od.Id,
+                UserId = od.UserId,
+                DeliveryAddress = od.DeliveryAddress,
+                CreatedAt = od.CreatedAt,
+                ProductsInOrder = od.OrderProducts.Select(pd => new ProductDetails
                 {
-                    Product = new
-                    {
-                        op.ProductModel.Id,
-                        op.ProductModel.Title,
-                        op.ProductModel.Description,
-                        op.ProductModel.Price
-                    }
+                    Id = pd.ProductModel.Id,
+                    Description = pd.ProductModel.Description,
+                    Title = pd.ProductModel.Title,
+                    Price = pd.ProductModel.Price
                 }).ToList(),
-               
             }).ToList();
             
             return Ok(result);

@@ -46,7 +46,9 @@ public class OrderModelRepository : AbstractRepository<OrderModel>, IOrderModelR
 
     public async Task<OrderModel> GetOneById(int id)
     {
-        var model = await DbModel.FindAsync(id);
+        var model = await DbModel.Include(o => o.OrderProducts)
+            .ThenInclude(op => op.ProductModel)
+            .FirstOrDefaultAsync(x => x.Id == id);
 
         if (model is null)
         {

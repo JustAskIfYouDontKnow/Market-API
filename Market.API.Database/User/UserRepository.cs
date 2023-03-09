@@ -32,7 +32,7 @@ public class UserRepository : AbstractRepository<UserModel>, IUserRepository
 
         if (user is null)
         {
-            throw new Exception("User is not found");
+            throw new Exception($"User ID: {id} is not found");
         }
 
         return user;
